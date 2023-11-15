@@ -1,4 +1,5 @@
 from dataclasses import dataclass 
+import pkg_resources  # part of setuptools
 
 @dataclass
 class Version:
@@ -11,7 +12,10 @@ version_list = [
     version_1
 ]
 
-last_version = version_1
+project_name = "{{ cookiecutter.project_name }}"
+
+version = pkg_resources.require("MyProject")[0].version
+last_version = version
 
 def versions():
     return version_list

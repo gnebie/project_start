@@ -4,8 +4,8 @@ import os
 #https://pythonhosted.org/an_example_pypi_project/setuptools.html
 #https://python-poetry.org/docs/basic-usage/
 
-project_name = ""
-git = "https://github.com/gnebie"
+project_name = "{{ cookiecutter.project_name }}"
+git = "https://github.com/{{ cookiecutter.repo_name }}"
 
 def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
@@ -15,13 +15,13 @@ with open('requirements.txt') as f:
 
 
 setup(
-    version="1.0.0",
+    version="{{ cookiecutter.version }}",
     description="My description",
     long_description=read('README.md'),
     long_description_content_type="text/markdown",
     url=f"{git}/{project_name}",
-    author="NEBIE Guillaume",
-    author_email="nebie.guillaume.lale@gmail.com",
+    author="{{ cookiecutter.autor }}",
+    author_email="{{ cookiecutter.email }}",
     license="MIT",
     classifiers=[
         "License :: OSI Approved :: MIT License",
