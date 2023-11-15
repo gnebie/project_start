@@ -1,0 +1,19 @@
+{
+    "app": {
+        "environement":"prod"
+    },
+    "logging": {
+        "log_folder":"logs"
+    },
+    "database":{
+        "name":"sqlite",
+        "url":"{dialect}+{driver}://{user}:{password}@{host}:{port}/{database}",
+        "user":"",
+        "password":"",
+        "host":"",
+        "port":"",
+        "dialect":"",
+        "driver":"",
+        "database":""
+    },
+}
