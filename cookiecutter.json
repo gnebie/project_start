@@ -1,5 +1,7 @@
 {
-    "repo_name": "mypackage",
+    "project_name": "mypackage",
+    "repo_name": "gnebie",
     "version": "0.0.1",
-    "author": "Your Name"
+    "author": "NEBIE Guillaume",
+    "email":"nebie.guillaume.lale@gmail.com",
   }

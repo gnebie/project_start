@@ -17,4 +17,7 @@ create-executable:
 	echo "https://realpython.com/pyinstaller-python/"
 
 
+cookiecutter-run:
+ 	pipx run cookiecutter ./
+
 .PHONY: init test

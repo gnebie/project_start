@@ -4,3 +4,6 @@ __pycache__
 **/__pycache__
 venv/
 config.json
+config-files/*.json
+config-files/*.db
+cookiecutter.json
