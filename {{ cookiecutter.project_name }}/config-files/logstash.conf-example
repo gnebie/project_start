@@ -1,0 +1,17 @@
+input {
+  beats {
+    port => 5044
+  }
+}
+
+filter {
+  # Ajoutez vos filtres ici
+}
+
+output {
+  elasticsearch {
+    hosts => ["http://elasticsearch:9200"]
+    index => "{{ cookiecutter.project_name }}-logs-%{+YYYY.MM.dd}"
+  }
+  stdout { codec => rubydebug }
+}

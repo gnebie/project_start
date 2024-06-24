@@ -20,8 +20,8 @@ function show_help {
 
 # Variables par défaut
 PROJECT_PATH=""
-VENV_PATH="/home/gnebie/sandbox/stablediffusion/sdweb_client/tools/project_start/venv"
-TEMPLATE_PATH="/home/gnebie/sandbox/stablediffusion/sdweb_client/tools/project_start/project_start_files"
+VENV_PATH=""
+TEMPLATE_PATH=""
 
 # Analyse des arguments de la ligne de commande
 while [[ "$#" -gt 0 ]]; do
@@ -79,10 +79,5 @@ deactivate
 # Copie du répertoire virtuel
 # cp -r $VENV_PATH .
 # python -m venv venv
-
-# Copie des fichiers et répertoires nécessaires
-for file in cli.py Dockerfile HOW_TO_CONTRIBUTE Makefile LICENCE pytest.ini README.md requirements-dev.txt requirements.txt setup.cfg setup.py sonar-project.properties docs config-files ; do
-    copy_if_not_exists "$TEMPLATE_PATH/$file" "$file"
-done
 
 echo "Project setup complete at $PROJECT_PATH"
