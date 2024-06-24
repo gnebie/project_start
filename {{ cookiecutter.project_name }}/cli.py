@@ -1,5 +1,5 @@
 
-from project.__main__ import main
+from app.__main__ import main
 
 
 if __name__ == "__main__":

@@ -1,0 +1,11 @@
+{
+    "firebaseConfig": {
+        "apiKey": "1234",
+        "authDomain": "hello.test.com",
+        "projectId": "hello-test",
+        "storageBucket": "hello-test.appspot.com",
+        "messagingSenderId": "9876",
+        "appId": "1:1236:web:42587",
+        "measurementId": "G-78E78WY"
+    }
+}

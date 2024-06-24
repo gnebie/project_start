@@ -6,15 +6,19 @@
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-project = 'start project'
-copyright = '2023, Guillaume'
-author = 'Guillaume'
+project = '{{ cookiecutter.project_name }}'
+copyright = '{{ cookiecutter.year }}, {{ cookiecutter.organization_name }}'
+author = '{{ cookiecutter.author }}'
 release = 'v1'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
-extensions = []
+extensions = [
+    'sphinx.ext.autodoc',
+    'sphinx.ext.napoleon',
+    'sphinx.ext.viewcode',
+]
 
 templates_path = ['_templates']
 exclude_patterns = []
