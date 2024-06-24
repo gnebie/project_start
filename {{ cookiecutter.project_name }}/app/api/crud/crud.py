@@ -13,7 +13,20 @@ CreateSchemaType = TypeVar("CreateSchemaType", bound=BaseModel)
 UpdateSchemaType = TypeVar("UpdateSchemaType", bound=BaseModel)
 
 class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
+    """
+    CRUD (Create, Read, Update, Delete) base class providing generic methods for database operations.
+    
+    Attributes:
+        model (Type[ModelType]): SQLAlchemy model class.
+    """
+        
     def __init__(self, model: Type[ModelType]):
+        """
+        Initialize the CRUD base class.
+        
+        Args:
+            model (Type[ModelType]): SQLAlchemy model class.
+        """
         self.model = model
         self.logger = logging.getLogger(self.model.__name__)
 
