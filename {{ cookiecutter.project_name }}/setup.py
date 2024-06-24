@@ -20,7 +20,7 @@ setup(
     long_description=read('README.md'),
     long_description_content_type="text/markdown",
     url=f"{git}/{project_name}",
-    author="{{ cookiecutter.autor }}",
+    author="{{ cookiecutter.author }}",
     author_email="{{ cookiecutter.email }}",
     license="MIT",
     classifiers=[

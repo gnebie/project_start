@@ -1,0 +1,7 @@
+sphinx
+pyinstaller
+pipx
+pytest
+pytest-asyncio
+flake8
+black

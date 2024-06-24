@@ -1,21 +1,21 @@
 import argparse
 
-description ='Stable diffusion api python launcher.'
+description ='Stable diffusion python launcher (not unicorn api compatible).'
 version= "0.0.2"
 
-parser = argparse.ArgumentParser(description=description)
-parser.add_argument('-V', '--version', action="version", version="%(prog)s " + version)
+# parser = argparse.ArgumentParser(description=description)
+# parser.add_argument('-V', '--version', action="version", version="%(prog)s " + version)
 
-# log arguments 
-parser.add_argument('-v', '--verbose', action="count", default=0, help="verbose level, repeat up to three times.1-info 2-debug 3-trace")
-parser.add_argument('-q', '--quiet', action="count", help="quiet level, repeat up to 2 times, 1-error 2-critical.")
-parser.add_argument('--log-file', help='Specify a log-filename.')
-parser.add_argument('--log-folder', help='Specify the log folder.')
-parser.add_argument('-l', '--log-level', help='Specify a log file level.', type=str, choices=['TRACE','DEBUG','INFO','WARNING','ERROR','CRITIQUE'])
+# # log arguments 
+# parser.add_argument('-v', '--verbose', action="count", default=0, help="verbose level, repeat up to three times.1-info 2-debug 3-trace")
+# parser.add_argument('-q', '--quiet', action="count", help="quiet level, repeat up to 2 times, 1-error 2-critical.")
+# parser.add_argument('--log-file', help='Specify a log-filename.')
+# parser.add_argument('--log-folder', help='Specify the log folder.')
+# parser.add_argument('-l', '--log-level', help='Specify a log file level.', type=str, choices=['TRACE','DEBUG','INFO','WARNING','ERROR','CRITIQUE'])
 
-# run arguments
-parser.add_argument('--dry-run', action='store_true', help='Make a code simulation without call the changing methods.')
-parser.add_argument('--ignore-errors', action='store_true', help='Continue the script if there is an error.')
+# # run arguments
+# parser.add_argument('--dry-run', action='store_true', help='Make a code simulation without call the changing methods.')
+# parser.add_argument('--ignore-errors', action='store_true', help='Continue the script if there is an error.')
 
 # parser.add_argument('--interactive', action='store_true', help='Interactive api console.')
 # parser.add_argument('--config-file', help='Configuration file path, defalut "./contiguration.json".')

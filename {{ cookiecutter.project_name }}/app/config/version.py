@@ -7,18 +7,14 @@ class Version:
     version_endpoint:str
 
 version_1 = Version("v1.0", "/v1")
-
-version_list = [
-    version_1
-]
+version_list = [version_1]
 
 project_name = "{{ cookiecutter.project_name }}"
 
-version = pkg_resources.require("MyProject")[0].version
-last_version = version
+last_version = version_1
 
-def versions():
+def get_versions():
     return version_list
 
-def version():
+def get_last_version():
     return last_version
