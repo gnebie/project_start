@@ -20,8 +20,8 @@ function show_help {
 
 # Variables par défaut
 PROJECT_PATH=""
-VENV_PATH=""
-TEMPLATE_PATH=""
+VENV_PATH="/home/gnebie/sandbox/stablediffusion/sdweb_client/tools/project_start/venv"
+TEMPLATE_PATH="/home/gnebie/sandbox/stablediffusion/sdweb_client/tools/project_start/project_start_files"
 
 # Analyse des arguments de la ligne de commande
 while [[ "$#" -gt 0 ]]; do

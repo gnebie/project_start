@@ -84,7 +84,7 @@ docker run -p 1080:80 \
     --name pgadmin \
     dpage/pgadmin4
 
-# Host name/address : docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' my_postgres
+# Host name/address : docker inspect -f "\{\{range .NetworkSettings.Networks\}\}\{\{.IPAddress\}\}\{\{end\}\}" my_postgres
 # docker rm -f pgadmin
 ```
 
