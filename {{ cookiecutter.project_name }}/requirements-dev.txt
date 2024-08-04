@@ -1,7 +1,10 @@
-sphinx
-pyinstaller
+aiosqlite
+black
+flake8
+mypy
 pipx
+pydeps
+pyinstaller
 pytest
 pytest-asyncio
-flake8
-black
+sphinx

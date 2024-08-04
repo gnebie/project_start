@@ -1,4 +1,5 @@
 from icecream import ic
+import logging
 
 logger = logging.getLogger(__name__)
 def add_routes(settings, app):

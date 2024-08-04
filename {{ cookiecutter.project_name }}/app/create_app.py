@@ -12,7 +12,7 @@ from app.api.db.init_db import async_init_db
 from app.config.settings import settings
 from app.middleware import TraceIDMiddleware
 from app.middleware import PrometheusMiddleware
-from app.middleware import firebase_auth
+# from app.middleware import firebase_auth
 from app.metrics import start_prometheus_server
 # from app.api.v1.endpoints import user_router, admin_router, public_router, global_router
 from app.api.v1 import add_routes
@@ -24,16 +24,26 @@ logger = logging.getLogger(__name__)
 
 
 app = FastAPI(
-    title="User API",
-    description="The User API microservice",
+    title="API",
+    description="The API microservice",
     version="1.0.0",
     openapi_tags=[
         {
-            "name": "users",
-            "description": "Operations with users.",
+            "name": "",
+            "description": "Operations with .",
         },
     ],
 )
+
+def add_middlewares_catch_global_error(settings, app, middleware_name, middleware_add_function):
+    try:
+        # Add monitoring middleware
+        logger.trace("Adding middleware : " + middleware_name)
+        middleware_add_function()
+    except Exception as e:
+        ic(e)
+        logger.error("Error adding middlewares : " + middleware_name, exc_info=True)
+
 
 def add_middlewares(settings, app):
     """
@@ -43,37 +53,47 @@ def add_middlewares(settings, app):
     :param app: FastAPI application instance
     """
     logger.trace("Adding middlewares to the FastAPI application")
-    try:
-        # Add monitoring middleware
-        app.add_middleware(PrometheusMiddleware)
-    except Exception as e:
-        ic(e)
-        logger.error("Error adding middlewares", exc_info=True)
-    try:
-        
-        # CORS (Cross-Origin Resource Sharing) middleware
-        app.add_middleware(
-            CORSMiddleware,
-            allow_origins=["*"],  # Adjust allowed origins
-            allow_credentials=True,
-            allow_methods=["GET", "POST", "UPDATE", "DELETE"],
-            allow_headers=["*"],
-        )
-    except Exception as e:
-        ic(e)
-        logger.error("Error adding middlewares", exc_info=True)
-    try:
-        # HTTPS redirect middleware
-        app.add_middleware(HTTPSRedirectMiddleware)
-    except Exception as e:
-        ic(e)
-        logger.error("Error adding middlewares", exc_info=True)
-    try:
-        # TraceID middleware: add a unique request ID to the log to trace requests through the logs
-        app.add_middleware(TraceIDMiddleware)
-    except Exception as e:
-        ic(e)
-        logger.error("Error adding middlewares", exc_info=True)
+    add_middlewares_catch_global_error(settings, app, "PrometheusMiddleware", lambda: app.add_middleware(PrometheusMiddleware))
+    add_middlewares_catch_global_error(settings, app, "CORSMiddleware", lambda:         
+                                    app.add_middleware(
+                                        CORSMiddleware,
+                                        allow_origins=["*"],  # Adjust allowed origins
+                                        allow_credentials=True,
+                                        allow_methods=["GET", "POST", "UPDATE", "DELETE"],
+                                        allow_headers=["*"],))
+    add_middlewares_catch_global_error(settings, app, "HTTPSRedirectMiddleware", lambda: app.add_middleware(HTTPSRedirectMiddleware))
+    add_middlewares_catch_global_error(settings, app, "TraceIDMiddleware", lambda: app.add_middleware(TraceIDMiddleware))
+    
+    # try:
+    #     # Add monitoring middleware
+    #     app.add_middleware(PrometheusMiddleware)
+    # except Exception as e:
+    #     ic(e)
+    #     logger.error("Error adding middlewares", exc_info=True)
+    # try:
+    #     # CORS (Cross-Origin Resource Sharing) middleware
+    #     app.add_middleware(
+    #         CORSMiddleware,
+    #         allow_origins=["*"],  # Adjust allowed origins
+    #         allow_credentials=True,
+    #         allow_methods=["GET", "POST", "UPDATE", "DELETE"],
+    #         allow_headers=["*"],
+    #     )
+    # except Exception as e:
+    #     ic(e)
+    #     logger.error("Error adding middlewares", exc_info=True)
+    # try:
+    #     # HTTPS redirect middleware
+    #     app.add_middleware(HTTPSRedirectMiddleware)
+    # except Exception as e:
+    #     ic(e)
+    #     logger.error("Error adding middlewares", exc_info=True)
+    # try:
+    #     # TraceID middleware: add a unique request ID to the log to trace requests through the logs
+    #     app.add_middleware(TraceIDMiddleware)
+    # except Exception as e:
+    #     ic(e)
+    #     logger.error("Error adding middlewares", exc_info=True)
     # try:
     #     # Firebase authentication middleware
     #     app.add_middleware(firebase_auth)

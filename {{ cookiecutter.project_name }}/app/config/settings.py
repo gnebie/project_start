@@ -43,6 +43,7 @@ class Settings(BaseSettings):
     DB_HOST: str = ""
     DB_PORT: int = 5432
     DB_NAME: str = ""
+    DB_CREATE_BASE_VALUES: bool = False
     PROMETHEUS_PORT: int = 8001
     LOG_FOLDER: str = "logs"
     LOG_FILE: str = "{{ cookiecutter.project_name }}.log"

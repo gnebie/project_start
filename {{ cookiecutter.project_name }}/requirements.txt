@@ -3,3 +3,9 @@ sqlmodel
 httpx
 icecream
 fastapi-pagination
+fastapi-babel
+babel
+firebase-admin
+prometheus_client
+pydantic-settings="^2.3.3"
+asyncpg

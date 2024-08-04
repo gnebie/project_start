@@ -17,13 +17,14 @@ sphinx-build:
 
 # Initialization and installation of dependencies
 init:
-	poetry install --no-dev
+	poetry install --only main
 
 install-dev:
 	poetry install
 
 # Run the application localy
 local-run:
+	(docker start my_postgres && sleep 5s) || echo "docker start my_postgres fail"
 	poetry run uvicorn $(PROJECT_NAME).create_app:app --reload --ssl-keyfile=config-files/key.pem --ssl-certfile=config-files/cert.pem
 
 # Build the executable
@@ -32,19 +33,28 @@ build:
 
 # Running tests
 test:
-	poetry run pytest tests
+	poetry run pytest $(PROJECT_NAME)/tests
 
 # Running tests
 test-coverage:
 	poetry run pytest --cov=app --cov-report=xml --junitxml=tests/reports/results.xml
 
-# Linting the code
+# Linting the code for building
 lint:
 	poetry run flake8 .
+	@echo "Verfy the static python types"
+	poetry run mypy $(PROJECT_NAME)
+
+# Linting the code for development
+quick-lint:
+	poetry run flake8 --ignore=F401 . 
+	@echo "Verfy the static python types"
+	poetry run mypy $(PROJECT_NAME)
 
 # Formatting the code
 format:
-	poetry run black .
+	@echo "Lauche the autolint"
+	poetry run black  --line-length 256 .
 
 # Clean generated files
 clean:
@@ -58,6 +68,10 @@ clean:
 deploy:
 	@docker build -t $(DOCKER_NAME) .
 	@docker run -d -p $(PORT):$(INTERNALPORT) $(DOCKER_NAME)
+
+create-graph:
+	poetry run pydeps app
+
 
 # Create executable placeholder
 create-executable:
