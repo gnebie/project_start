@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List, Optional
 from app.schemas.item import ItemCreate, ItemRead, ItemUpdate
@@ -38,6 +38,7 @@ async def get_routes_example():
 
     @router.get("/filter", response_model=Page[ItemRead], dependencies=[Depends(firebase_auth)])
     async def filter_items(
+        request: Request,
         name: Optional[str] = Query(None),
         price: Optional[float] = Query(None),
         select_fields=["name", "price"],
@@ -45,7 +46,6 @@ async def get_routes_example():
         ascending: bool = Query(True),
         db: AsyncSession = Depends(get_session),
         params: Params = Depends(),
-        request: Request
     ):
         await firebase_auth.check_role(request, "user")
         filters = {}
