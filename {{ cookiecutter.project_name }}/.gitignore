@@ -78,9 +78,6 @@ venv/
 # VS Code
 .vscode/
 
-# Docker
-docker-compose.yml
-Dockerfile
 
 # Logs
 logs/
@@ -100,3 +97,5 @@ config-files/.env*
 
 
 tests/reports
+app.svg
+

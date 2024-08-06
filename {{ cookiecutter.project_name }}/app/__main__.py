@@ -3,6 +3,7 @@ from app.create_app import create_app
 
 app = create_app()
 
+
 def main():
     # Démarrez l'application ASGI avec uvicorn si ce fichier est exécuté directement
     # import uvicorn

@@ -1,12 +1,12 @@
 import argparse
 
-description ='Stable diffusion python launcher (not unicorn api compatible).'
-version= "0.0.2"
+description = "Stable diffusion python launcher (not unicorn api compatible)."
+version = "0.0.2"
 
 # parser = argparse.ArgumentParser(description=description)
 # parser.add_argument('-V', '--version', action="version", version="%(prog)s " + version)
 
-# # log arguments 
+# # log arguments
 # parser.add_argument('-v', '--verbose', action="count", default=0, help="verbose level, repeat up to three times.1-info 2-debug 3-trace")
 # parser.add_argument('-q', '--quiet', action="count", help="quiet level, repeat up to 2 times, 1-error 2-critical.")
 # parser.add_argument('--log-file', help='Specify a log-filename.')

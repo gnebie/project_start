@@ -18,20 +18,9 @@ import logging
 from app.api.services import billing_service
 from starlette.testclient import TestClient
 from icecream import ic
+from app.tests.integration_tests.integration_test_utils.integration_utils import dict_to_mock, post_endpoint_tester
 
 logger = logging.getLogger(__name__)
-
-
-@pytest.fixture
-def mock_request():
-    return Request(scope={"type": "http"})
-
-
-def dict_to_mock(data):
-    mock_obj = Mock()
-    for key, value in data.items():
-        setattr(mock_obj, key, value)
-    return mock_obj
 
 
 @pytest.mark.asyncio
@@ -66,59 +55,6 @@ async def test_session_fixture(session):
     assert operation is None
 
     print("session test Success")
-
-
-@pytest.mark.asyncio
-async def post_endpoint_tester(
-    test_app, session, permission_list: list[str], request_data: dict, response_data: dict, service_patch: str, route: str, response_status_code: int = status.HTTP_200_OK, auth_token: str = "valid_token", verb: str = "post"
-) -> dict:
-    """
-    Test a POST endpoint with the given parameters.
-
-    Args:
-        test_app: The FastAPI test client.
-        session: The database session fixture.
-        permission_list (list[str]): List of permissions to mock for the user.
-        request_data (dict): The JSON payload to send with the POST request.
-        response_data (dict): The expected response data from the service.
-        service_patch (str): The path to the service function to patch.
-        route (str): The API route to test.
-
-    Returns:
-        dict: The JSON response data from the endpoint.
-    """
-    mock_user = UserInfo(username="test_user", permissions=permission_list)
-    headers = {"Authorization": f"Bearer {auth_token}"}
-
-    with patch("httpx.AsyncClient.post") as mock_post:
-        mock_post.return_value = Mock()
-        mock_post.return_value.status_code = 200
-        mock_post.return_value.json.return_value = {"permissions": permission_list}
-        with patch(service_patch) as mock_create:
-            mock_create.return_value = response_data
-            with patch("app.middleware.verify_login_permissions.verify_permissions_short") as mock_verify, patch("app.api.db.get_async_session", return_value=session):
-
-                mock_verify.return_value = mock_user
-
-                if verb.lower() == "get":
-                    response = test_app.get(route, json=request_data, headers=headers)
-                elif verb.lower() == "post":
-                    response = test_app.post(route, json=request_data, headers=headers)
-                elif verb.lower() == "put":
-                    response = test_app.put(route, json=request_data, headers=headers)
-                elif verb.lower() == "delete":
-                    response = test_app.delete(route, json=request_data, headers=headers)
-                else:
-                    # default get
-                    response = test_app.get(route, json=request_data, headers=headers)
-
-                # Validate response status
-                assert response.status_code == response_status_code, f"Expected {response_status_code} but got {response.status_code}"
-
-                # Validate response data
-                data = response.json()
-
-                return data
 
 
 @pytest.mark.asyncio

@@ -32,7 +32,7 @@ def test_app():
 
 @pytest.fixture(scope="session")
 def engine():
-    return create_async_engine(DATABASE_URL, echo=True)
+    return create_async_engine(DATABASE_URL, echo=False)
 
 
 @pytest.fixture(scope="session")
@@ -50,4 +50,3 @@ async def session(engine, setup_database) -> AsyncGenerator[AsyncSession, None]:
     async with async_session() as session:
         yield session
         await session.rollback()
-

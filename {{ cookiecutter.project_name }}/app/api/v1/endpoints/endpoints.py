@@ -10,6 +10,7 @@ from fastapi_pagination import Page, add_pagination, Params
 router = APIRouter()
 crud_item = CRUDBase[Item, ItemCreate, ItemUpdate](Item)
 
+
 async def get_routes_example():
     @router.post("/", response_model=ItemRead, dependencies=[Depends(firebase_auth)])
     async def create_item(item_in: ItemCreate, db: AsyncSession = Depends(get_session)):

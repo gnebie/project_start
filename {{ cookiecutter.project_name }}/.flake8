@@ -1,5 +1,5 @@
 [flake8]
-max-line-length = 79
+max-line-length = 256
 exclude = 
     .git,
     __pycache__,
@@ -9,4 +9,5 @@ exclude =
     .eggs,
     *.egg-info
 ignore =
-    W503   # line break before binary operator
+    # line break before binary operator
+    W503

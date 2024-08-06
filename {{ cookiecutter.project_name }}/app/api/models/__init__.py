@@ -1,3 +1,3 @@
-# the models 
+# the models
 
 from .models import *

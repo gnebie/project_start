@@ -4,10 +4,11 @@ from firebase_admin import auth
 import firebase_admin
 from app.config.firebase import firestore_client
 
+
 class FirebaseAuth(HTTPBearer):
     def __init__(self, auto_error: bool = True):
         super(FirebaseAuth, self).__init__(auto_error=auto_error)
-    
+
     async def __call__(self, request: Request):
         credentials = await super(FirebaseAuth, self).__call__(request)
         if credentials:
@@ -19,5 +20,6 @@ class FirebaseAuth(HTTPBearer):
             except firebase_admin.auth.InvalidIdTokenError:
                 raise HTTPException(status_code=401, detail="Invalid authentication credentials")
         raise HTTPException(status_code=403, detail="Invalid authorization code")
+
 
 firebase_auth = FirebaseAuth()

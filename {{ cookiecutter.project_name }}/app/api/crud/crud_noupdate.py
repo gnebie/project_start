@@ -11,6 +11,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 ModelType = TypeVar("ModelType", bound=SQLModel)
 CreateSchemaType = TypeVar("CreateSchemaType", bound=BaseModel)
 
+
 class CRUDBaseNoUpdate(Generic[ModelType, CreateSchemaType]):
     """
     Base class for CRUD operations, excluding the update operation.
@@ -59,7 +60,7 @@ class CRUDBaseNoUpdate(Generic[ModelType, CreateSchemaType]):
         Raises:
             IntegrityError: If there is an integrity error during creation.
         """
-        obj_in_data = obj_in.dict()
+        obj_in_data = obj_in.model_dump()
         db_obj = self.model(**obj_in_data)
         self.logger.debug(f"Creating {self.model.__name__} asynchronously with data: {obj_in_data}")
         try:

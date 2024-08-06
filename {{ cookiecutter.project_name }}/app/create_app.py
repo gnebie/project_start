@@ -8,13 +8,13 @@ import json
 from contextlib import asynccontextmanager
 
 from app.config.logger import setup_logging
-from app.api.db.init_db import async_init_db
+from app.api.db import async_init_db
 from app.config.settings import settings
 from app.middleware import TraceIDMiddleware
 from app.middleware import PrometheusMiddleware
+
 # from app.middleware import firebase_auth
 from app.metrics import start_prometheus_server
-# from app.api.v1.endpoints import user_router, admin_router, public_router, global_router
 from app.api.v1 import add_routes
 
 from icecream import ic
@@ -35,7 +35,8 @@ app = FastAPI(
     ],
 )
 
-def add_middlewares_catch_global_error(settings, app, middleware_name, middleware_add_function):
+
+def add_middlewares_catch_global_error(middleware_name, middleware_add_function):
     try:
         # Add monitoring middleware
         logger.trace("Adding middleware : " + middleware_name)
@@ -52,54 +53,22 @@ def add_middlewares(settings, app):
     :param settings: Application settings
     :param app: FastAPI application instance
     """
-    logger.trace("Adding middlewares to the FastAPI application")
-    add_middlewares_catch_global_error(settings, app, "PrometheusMiddleware", lambda: app.add_middleware(PrometheusMiddleware))
-    add_middlewares_catch_global_error(settings, app, "CORSMiddleware", lambda:         
-                                    app.add_middleware(
-                                        CORSMiddleware,
-                                        allow_origins=["*"],  # Adjust allowed origins
-                                        allow_credentials=True,
-                                        allow_methods=["GET", "POST", "UPDATE", "DELETE"],
-                                        allow_headers=["*"],))
-    add_middlewares_catch_global_error(settings, app, "HTTPSRedirectMiddleware", lambda: app.add_middleware(HTTPSRedirectMiddleware))
-    add_middlewares_catch_global_error(settings, app, "TraceIDMiddleware", lambda: app.add_middleware(TraceIDMiddleware))
-    
-    # try:
-    #     # Add monitoring middleware
-    #     app.add_middleware(PrometheusMiddleware)
-    # except Exception as e:
-    #     ic(e)
-    #     logger.error("Error adding middlewares", exc_info=True)
-    # try:
-    #     # CORS (Cross-Origin Resource Sharing) middleware
-    #     app.add_middleware(
-    #         CORSMiddleware,
-    #         allow_origins=["*"],  # Adjust allowed origins
-    #         allow_credentials=True,
-    #         allow_methods=["GET", "POST", "UPDATE", "DELETE"],
-    #         allow_headers=["*"],
-    #     )
-    # except Exception as e:
-    #     ic(e)
-    #     logger.error("Error adding middlewares", exc_info=True)
-    # try:
-    #     # HTTPS redirect middleware
-    #     app.add_middleware(HTTPSRedirectMiddleware)
-    # except Exception as e:
-    #     ic(e)
-    #     logger.error("Error adding middlewares", exc_info=True)
-    # try:
-    #     # TraceID middleware: add a unique request ID to the log to trace requests through the logs
-    #     app.add_middleware(TraceIDMiddleware)
-    # except Exception as e:
-    #     ic(e)
-    #     logger.error("Error adding middlewares", exc_info=True)
-    # try:
-    #     # Firebase authentication middleware
-    #     app.add_middleware(firebase_auth)
-    # except Exception as e:
-    #     ic(e)
-    #     logger.error("Error adding middlewares", exc_info=True)
+    logger.info("Adding middlewares to the FastAPI application")
+    add_middlewares_catch_global_error("PrometheusMiddleware", lambda: app.add_middleware(PrometheusMiddleware))
+    add_middlewares_catch_global_error(
+        "CORSMiddleware",
+        lambda: app.add_middleware(
+            CORSMiddleware,
+            allow_origins=["*"],  # Adjust allowed origins
+            allow_credentials=True,
+            allow_methods=["GET", "POST", "PUT", "DELETE"],
+            allow_headers=["*"],
+        ),
+    )
+    add_middlewares_catch_global_error("HTTPSRedirectMiddleware", lambda: app.add_middleware(HTTPSRedirectMiddleware))
+    add_middlewares_catch_global_error("TraceIDMiddleware", lambda: app.add_middleware(TraceIDMiddleware))
+    # add_middlewares_catch_global_error("TraceIDMiddleware", lambda: app.add_middleware(firebase_auth))
+
 
 def init_services(settings):
     """
@@ -107,13 +76,16 @@ def init_services(settings):
 
     :param settings: Application settings
     """
-    logger.trace("Initializing external services")
+    if settings.ENV.lower() == "test" or settings.ENV.lower() == "dev":
+        return
+    logger.info("Initializing external services")
     try:
         # Start the Prometheus server
         start_prometheus_server(settings)
     except Exception as e:
         ic(e)
         logger.error("Error initializing services", exc_info=True)
+
 
 def create_app():
     """
@@ -127,8 +99,7 @@ def create_app():
     """
     # ic(settings)
     try:
-        # setup_logging(log_folder=os.getenv('LOG_FOLDER', 'logs'), log_level=os.getenv('LOG_LEVEL', 'INFO'))
-        # logger.trace("Starting up the FastAPI application")
+        logger.info("Starting up the FastAPI application")
         add_middlewares(settings, app)
         init_services(settings)
         add_routes(settings, app)
@@ -138,6 +109,7 @@ def create_app():
         ic(e)
         logger.error("Error during app startup", exc_info=True)
 
+
 async def generate_openapi():
     pathfile = "docs/openapi.json"
     openapi_schema = get_openapi(
@@ -146,6 +118,7 @@ async def generate_openapi():
         description="API Description",
         routes=app.routes,
     )
+    logger.trace("Create the last openapi schema the FastAPI application")
     try:
         with open(pathfile, "w") as file:
             json.dump(openapi_schema, file, indent=4)
@@ -153,10 +126,6 @@ async def generate_openapi():
         ic(e)
         logger.error("Error during Openapi creation : " + pathfile, exc_info=True)
 
-# @app.on_event("startup")
-# async def on_startup():
-#     await async_init_db()
-#     await generate_openapi()
 
 @asynccontextmanager
 async def on_startup(app: FastAPI):
@@ -164,6 +133,7 @@ async def on_startup(app: FastAPI):
     await async_init_db()
     await generate_openapi()
     yield
+
 
 app = FastAPI(lifespan=on_startup)
 app = create_app()

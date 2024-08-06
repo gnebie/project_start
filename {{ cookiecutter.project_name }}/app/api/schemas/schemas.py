@@ -8,11 +8,13 @@ class ItemCreate(BaseModel):
     price: float
     quantity: int
 
+
 class ItemRead(ItemCreate):
     id: int
 
     class Config:
         orm_mode = True
+
 
 class ItemUpdate(BaseModel):
     name: Optional[str]

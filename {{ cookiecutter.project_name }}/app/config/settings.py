@@ -3,15 +3,16 @@ import json
 from typing import Any, Dict, Optional, Tuple, Type
 from pathlib import Path
 from pydantic_settings import BaseSettings, PydanticBaseSettingsSource, JsonConfigSettingsSource
-from pydantic import  Field, field_validator, ValidationInfo, ConfigDict
+from pydantic import Field, field_validator, ValidationInfo, ConfigDict
 from pydantic.fields import FieldInfo
 import logging
 
 logger = logging.getLogger(__name__)
 
-environment = os.getenv('ENVIRONMENT', 'dev')
-env_file = os.getenv('{{ cookiecutter.project_name }}_ENV_FILE', f'config-files/.env.{environment}')
-config_file = os.getenv('{{ cookiecutter.project_name }}_CONFIG_FILE', f'config-files/config-{environment}.json')
+environment = os.getenv("ENVIRONMENT", "dev")
+env_file = os.getenv("{{ cookiecutter.project_name }}_ENV_FILE", f"config-files/.env.{environment}")
+config_file = os.getenv("{{ cookiecutter.project_name }}_CONFIG_FILE", f"config-files/config-{environment}.json")
+
 
 class Settings(BaseSettings):
     """
@@ -33,6 +34,7 @@ class Settings(BaseSettings):
         LOG_CONSOLE (str): The console log level.
         DRY_RUN (bool): If True, do not make actual API calls.
     """
+
     PROJECT_NAME: str = "UserManager"
     ENV: str = environment
     DB_URL: str = ""
@@ -51,7 +53,7 @@ class Settings(BaseSettings):
     LOG_CONSOLE: str = "TRACE"
     DRY_RUN: bool = False
 
-    model_config = ConfigDict(env_file=env_file, env_file_encoding='utf-8')
+    model_config = ConfigDict(env_file=env_file, env_file_encoding="utf-8")
 
     @classmethod
     def customise_sources(
