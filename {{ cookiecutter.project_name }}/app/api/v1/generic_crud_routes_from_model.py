@@ -8,7 +8,7 @@ from app.api.db.init_db import get_async_session
 
 ModelType = TypeVar("ModelType", bound=SQLModel)
 
-
+{% raw %}
 async def generate_crud_routes(model: Type[ModelType], schema: Type[BaseModel]) -> APIRouter:
     """
     Generate CRUD routes for a given SQLAlchemy model and Pydantic schema.
@@ -119,3 +119,4 @@ async def generate_crud_routes(model: Type[ModelType], schema: Type[BaseModel]) 
 # Exemple de génération des routes pour un modèle User
 # user_router = await generate_crud_routes(UserModel, UserSchema)
 # app.include_router(user_router)
+{% endraw %}
