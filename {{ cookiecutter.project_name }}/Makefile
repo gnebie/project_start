@@ -25,7 +25,7 @@ install-dev:
 # Run the application localy
 local-run:
 	(docker start my_postgres && sleep 5s) || echo "docker start my_postgres fail"
-	poetry run uvicorn $(PROJECT_NAME).create_app:app --reload --ssl-keyfile=config-files/key.pem --ssl-certfile=config-files/cert.pem
+	poetry run uvicorn $(PROJECT_NAME).create_app:app --port $(PORT) --reload --ssl-keyfile=config-files/key.pem --ssl-certfile=config-files/cert.pem
 
 # Build the executable
 build:
