@@ -1,4 +1,5 @@
 from typing import Type, TypeVar, Generic, List, Optional, Union, Dict, Any
+from uuid import UUID
 from sqlmodel import SQLModel, select
 from pydantic import BaseModel
 from sqlalchemy.exc import IntegrityError
@@ -6,8 +7,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi_pagination import Page, paginate
 from sqlalchemy.orm import joinedload
 import logging
-from uuid import UUID
-
 from fastapi import APIRouter, Depends, HTTPException, Query
 
 ModelType = TypeVar("ModelType", bound=SQLModel)
@@ -51,13 +50,32 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
             raise HTTPException(status_code=401, detail="Object Id not found")
         return find_result
 
+    async def get_by_id_and_user_async(self, db: AsyncSession, id: UUID, user_uuid: UUID, error_if_fail=True) -> Optional[ModelType]:
+        """
+        Fetch a single record by ID asynchronously.
+
+        Args:
+            db (AsyncSession): The database session.
+            id (UUID): The ID of the record to fetch.
+            user_uuid (UUID): The user ID of the record to fetch.
+
+        Returns:
+            Optional[ModelType]: The record with the specified ID, or None if not found.
+        """
+        self.logger.debug(f"Fetching {self.model.__name__} with id: {id} asynchronously")
+        result = await db.execute(select(self.model).where((self.model.user_uuid == user_uuid) & (self.model.id == id)))
+        find_result = result.scalars().first()
+        if error_if_fail and not find_result:
+            raise HTTPException(status_code=404, detail="Object User not found")
+        return find_result
+
     async def get_from_user_async(self, db: AsyncSession, user_uuid: UUID, error_if_fail=True) -> Optional[ModelType]:
         """
         Fetch a single record by ID asynchronously.
 
         Args:
             db (AsyncSession): The database session.
-            user_uuid (UUID): The ID of the record to fetch.
+            user_uuid (UUID): The user ID of the record to fetch.
 
         Returns:
             Optional[ModelType]: The record with the specified ID, or None if not found.
@@ -68,6 +86,23 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         if error_if_fail and not find_result:
             raise HTTPException(status_code=404, detail="Object User not found")
         return find_result
+
+    async def get_by_id_and_user_or_public_async(self, db: AsyncSession, id: UUID, user_uuid: UUID) -> Optional[ModelType]:
+        """
+        Fetch a story either by user UUID or if the story is public.
+
+        Args:
+            db (AsyncSession): The database session.
+            id (UUID): The ID of the record to fetch.
+            user_uuid (UUID): The user ID of the record to fetch.
+
+        Returns:
+            Optional[ModelType]: The record with the specified ID, or None if not found.
+
+        """
+        query = select(self.model).where((self.model.id == id) & ((self.model.user_uuid == user_uuid) | (self.model.public_visibility == True)))
+        result = await db.execute(query)
+        return result.scalars().first()
 
     async def create_async(self, db: AsyncSession, obj_in: CreateSchemaType) -> ModelType:
         """
@@ -141,13 +176,13 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
             setattr(db_obj, field, obj_data[field])
         return await self.update_async(db, db_obj)
 
-    async def remove_async(self, db: AsyncSession, id: int) -> Optional[ModelType]:
+    async def remove_async(self, db: AsyncSession, id: UUID) -> Optional[ModelType]:
         """
         Remove a record by ID asynchronously.
 
         Args:
             db (AsyncSession): The database session.
-            id (int): The ID of the record to remove.
+            id (UUID): The ID of the record to remove.
 
         Returns:
             Optional[ModelType]: The removed record, or None if not found.
@@ -160,7 +195,33 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
             await db.commit()
         return obj
 
-    async def filter_and_paginate_async(self, db: AsyncSession, filters: Dict[str, Any], order_by: Optional[str] = None, ascending: bool = True, select_fields: Optional[List[str]] = None) -> Page[ModelType]:
+    async def remove_checking_user_async(self, db: AsyncSession, id: UUID, user_uuid: UUID) -> Optional[ModelType]:
+        """
+        Remove a record by ID asynchronously.
+
+        Args:
+            db (AsyncSession): The database session.
+            id (UUID): The ID of the record to remove.
+
+        Returns:
+            Optional[ModelType]: The removed record, or None if not found.
+        """
+        self.logger.debug(f"Removing {self.model.__name__} with id: {id} asynchronously")
+        result = await db.execute(select(self.model).where(self.model.id == id).where(self.model.user_uuid == user_uuid))
+        obj = result.scalars().first()
+        if obj:
+            await db.delete(obj)
+            await db.commit()
+        return obj
+
+    async def filter_and_paginate_async(
+        self,
+        db: AsyncSession,
+        filters: Dict[str, Any],
+        order_by: Optional[str] = None,
+        ascending: bool = True,
+        select_fields: Optional[List[str]] = None,
+    ) -> Page[ModelType]:
         """
         Filter records by attributes and optionally select specific fields asynchronously.
 

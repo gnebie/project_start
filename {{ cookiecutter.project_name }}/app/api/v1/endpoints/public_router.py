@@ -4,7 +4,7 @@ from starlette.requests import Request
 
 
 def get_public_router():
-    publicRouter = APIRouter()
+    publicRouter = APIRouter(tags=["Public"])
 
     @publicRouter.get("/version", tags=["Public"], operation_id="public_router_version")
     async def getVersion():
@@ -14,8 +14,9 @@ def get_public_router():
     async def health():
         return {"status": "ok"}
 
-    @publicRouter.get("/trace", tags=["Public"], operation_id="public_router_helth")
+    @publicRouter.get("/trace", tags=["Public"], operation_id="public_router_trace")
     async def trace(request: Request):
         return {"trace_id": request.state.trace_id}
 
     return publicRouter
+

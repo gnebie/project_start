@@ -99,3 +99,5 @@ config-files/.env*
 tests/reports
 app.svg
 
+docs/openapi.json
+
